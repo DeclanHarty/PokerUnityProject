@@ -155,8 +155,10 @@ MonoBehaviour:
   cardFront: {fileID: 2992508999644730597}
   cardMaterialDirectoryPath: Assets/Materials
   cardFrontMaterial: {fileID: 2100000, guid: 21c311cb5189089488d2c21dec3e5933, type: 2}
-  rank: 
-  suit: 0
+  value: 
+  dealSpeed: 20
+  flipSpeedInDegreesPerSecond: 540
+  turnSpeedInDegreesPerSecond: 720
 --- !u!1 &4353821158472779646
 GameObject:
   m_ObjectHideFlags: 0

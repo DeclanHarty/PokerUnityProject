@@ -6,13 +6,6 @@ using UnityEngine.TestTools;
 
 public class HandRankingTests
 {
-    // A Test behaves as an ordinary method
-    [Test]
-    public void HandRankingTestsSimplePasses()
-    {
-        // Use the Assert class to test conditions
-    }
-
     [Test]
     public void HandRankingStraightFlush()
     {

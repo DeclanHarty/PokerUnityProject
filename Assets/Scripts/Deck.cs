@@ -8,6 +8,7 @@ using UnityEngine.PlayerLoop;
 public class Deck : MonoBehaviour
 {
     public GameObject cardPrefab;
+    public HoleCards holeCards;
 
     private static string[] RANKS = {"A","2","3","4","5","6","7","8","9","T","J","Q","K"};
     private string[] SUITS = {"c", "d", "s", "h"};
@@ -16,7 +17,9 @@ public class Deck : MonoBehaviour
 
     public int drawingIndex = 0;
 
-    private void Start()
+    public float timeBetweenDeals;
+
+    private void Awake()
     {
         InitializeDeck();
         ShuffleDeck();
@@ -51,18 +54,55 @@ public class Deck : MonoBehaviour
     private void ShuffleDeck()
     {
         System.Random rng = new System.Random();
-        Shuffle<string>(rng, cardsInDeck);
+        Shuffle(rng, cardsInDeck);
         drawingIndex = 0;
     }
 
     public Card Draw()
     {
         Card card = Instantiate(cardPrefab, transform.position, Quaternion.identity).GetComponent<Card>();
+        card.transform.localScale = transform.localScale;
+        card.transform.localRotation = Quaternion.Euler(new Vector3(0,180));
         card.SetCard(cardsInDeck[drawingIndex]);
-        
-        Debug.Log(card.ToString());
 
         drawingIndex++;
         return card;
+    }
+
+    public IEnumerator Deal(HoleCards[] holes, int numberOfCards, Action onFinishDeal)
+    {
+        for(int i = 0; i < numberOfCards; i++)
+        {
+            foreach(HoleCards hole in holes)
+            {
+                Card card = Draw();
+                hole.AddNewCard(card);
+                yield return new WaitForSeconds(timeBetweenDeals);
+            }
+            
+        }
+
+        onFinishDeal?.Invoke();
+    }
+
+    public IEnumerator UnevenDeal(HoleCards[] holes, int[] cardsToDealEach, Action onFinishDeal)
+    {
+        int maxNumberOfCards = cardsToDealEach.Max();
+
+        for(int numberOfCardsDealt = 0; numberOfCardsDealt < maxNumberOfCards; numberOfCardsDealt++)
+        {
+            for(int holeIndex = 0; holeIndex < holes.Length; holeIndex++)
+            {
+                if(cardsToDealEach[holeIndex] > 0)
+                {
+                    cardsToDealEach[holeIndex]--;
+                    Card card = Draw();
+                    holes[holeIndex].AddNewCard(card);
+                    yield return new WaitForSeconds(timeBetweenDeals);
+                }
+            }
+        }
+
+        onFinishDeal?.Invoke();
     }
 }
